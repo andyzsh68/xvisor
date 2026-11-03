@@ -57,6 +57,7 @@ static int __init match_memory_node(struct fdt_node_header *fdt_node,
 {
 	int rc, i;
 	char dev_type[16];
+	char dev_status[16] = { 0 };
 	struct match_info *info = priv;
 
 	if (level == 1) {
@@ -69,6 +70,15 @@ static int __init match_memory_node(struct fdt_node_header *fdt_node,
 		}
 
 		if (!strncmp(dev_type, "memory", sizeof(dev_type))) {
+			rc = libfdt_get_property(info->fdt, fdt_node,
+				info->address_cells, info->size_cells,
+				"status", dev_status, sizeof(dev_status));
+			if (!rc && strncmp(dev_status, "okay",
+					   sizeof(dev_status)) &&
+			    strncmp(dev_status, "ok", sizeof(dev_status))) {
+				return 0;
+			}
+
 			for (i = 0; i < info->visited_count; i++) {
 				if (info->visited[i] == fdt_node) {
 					return 0;
