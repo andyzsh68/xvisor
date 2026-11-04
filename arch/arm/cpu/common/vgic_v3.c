@@ -351,6 +351,7 @@ static void vgic_v3_set_lr(u32 lr, struct vgic_lr *lrv,
 	DPRINTF("%s: LR%d = 0x%"PRIx64"\n", __func__, lr, lrval);
 
 	vgic_v3_write_lr(lr, lrval);
+	isb();
 }
 
 static void vgic_v3_get_lr(u32 lr, struct vgic_lr *lrv,
